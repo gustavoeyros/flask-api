@@ -1,7 +1,9 @@
-from flask import Flask
+from flask import Flask, jsonify
 from controllers import UserController
+from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
+ma = Marshmallow(app)
 
 
 @app.route('/signup', methods=['POST'])
