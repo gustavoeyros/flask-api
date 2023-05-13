@@ -1,9 +1,9 @@
 from flask import request, jsonify
 from models.bd import db
-from schemas.schemas import UserSchema
+from schemas.schemas import UserSchema, LoginSchema
 
 
-def cadastrar():
+def signUp():
     userSchema = UserSchema()
     errors = userSchema.validate(request.json)
     if errors:
@@ -14,7 +14,11 @@ def cadastrar():
     return jsonify({'message': 'Usuário cadastrado com sucesso!'})
 
 
-def login():
+def signIn():
+    loginSchema = LoginSchema()
+    errors = loginSchema.validate(request.json)
+    if errors:
+        return jsonify(errors), 400
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')

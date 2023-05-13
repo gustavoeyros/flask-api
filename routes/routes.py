@@ -6,9 +6,9 @@ routes = Blueprint('routes', __name__)
 
 @routes.route('/signup', methods=['POST'])
 def signup():
-    return UserController.cadastrar()
+    return UserController.signUp()
 
 
 @routes.route('/signin', methods=['POST'])
 def signin():
-    return UserController.login()
+    return UserController.signIn()
