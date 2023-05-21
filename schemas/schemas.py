@@ -10,3 +10,8 @@ class UserSchema(Schema):
 class LoginSchema(Schema):
     email = fields.Email(required=True)
     password = fields.String(required=True)
+
+
+class AnimalSchema(Schema):
+    name = fields.String(required=True)
+    color = fields.String(required=True)
