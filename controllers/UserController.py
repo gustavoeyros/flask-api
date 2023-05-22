@@ -77,7 +77,7 @@ def findAnimals(userId):
 
         animal_list = []
         for animal in animals:
-            animal_info = animal['animal']
+            animal_info = animal['animals']
             animal_list.append(animal_info)
 
         return jsonify({'animals': animal_list})
