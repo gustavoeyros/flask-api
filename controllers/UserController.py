@@ -48,9 +48,17 @@ def saveAnimal(userId):
     user = user_collection.find_one({'_id': user_id})
 
     if user:
+        animal = {
+            'name': data.get('name'),
+            'color': data.get('color')
+        }
+
         animal_collection = db['animals']
-        animal_collection.insert_one(
-            {'user_id': user_id, 'animal': data})
+        animal_collection.update_one(
+            {'user_id': user_id},
+            {'$push': {'animals': animal}},
+            upsert=True
+        )
 
         return jsonify({'message': 'Animal registrado com sucesso!'})
     else:
