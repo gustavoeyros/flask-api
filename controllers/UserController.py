@@ -3,6 +3,10 @@ from models.bd import db
 from schemas.schemas import UserSchema, LoginSchema, AnimalSchema
 from bson import ObjectId
 import bcrypt
+from gridfs import GridFS
+from PIL import Image
+import io
+fs = GridFS(db)
 
 
 def signUp():
@@ -45,17 +49,29 @@ def saveAnimal(userId):
     if errors:
         return jsonify(errors), 400
 
-    data = request.get_json()
+    name = request.form.get('name')
+    color = request.form.get('color')
+    image = request.files['image']
+
     user_id = ObjectId(userId)
     user_collection = db['users']
     user = user_collection.find_one({'_id': user_id})
 
     if user:
+        # Salvar a imagem no GridFS
+        image_data = image.read()
+        image_stream = io.BytesIO(image_data)
+        img = Image.open(image_stream)
+        image_id = fs.put(img, filename=image.filename)
+
+        # Criar o documento do animal
         animal = {
-            'name': data.get('name'),
-            'color': data.get('color')
+            'name': name,
+            'color': color,
+            'image_id': str(image_id)
         }
 
+        # Atualizar o documento do usuário com o novo animal
         animal_collection = db['animals']
         animal_collection.update_one(
             {'user_id': user_id},
@@ -65,7 +81,7 @@ def saveAnimal(userId):
 
         return jsonify({'message': 'Animal registrado com sucesso!'})
     else:
-        # User not found
+        # Usuário não encontrado
         return jsonify({'error': 'Usuário não encontrado!'}), 404
 
 

@@ -5,5 +5,7 @@ Dependencies:
 <li>pymongo</li>
 <li>marshmallow & flask_marshmallow</li>
 <li>bcrypt</li>
+<li>gridfs</li>
+<li>Pillow</li>
 
 </ul>
