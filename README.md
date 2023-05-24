@@ -13,5 +13,6 @@ Dependencies:
 <li>bcrypt</li>
 <li>gridfs</li>
 <li>Pillow</li>
+<li>flask_cors</li>
 
 </ul>
