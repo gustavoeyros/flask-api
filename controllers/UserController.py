@@ -39,7 +39,7 @@ def signIn():
             'utf-8')  # Converter de BinData para string
         if bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8')):
             user['_id'] = str(user['_id'])
-            return jsonify({'message': 'Login bem-sucedido!', 'userId': user['_id']})
+            return jsonify({'message': 'Login bem-sucedido!', 'userId': user['_id'], 'name': user['name']})
     # Usuário não encontrado ou credenciais inválidas
     return jsonify({'error': 'Credenciais inválidas'}), 401
 
