@@ -7,7 +7,7 @@ app = Flask(__name__)
 ma = Marshmallow(app)
 CORS(app)
 
-
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
 app.register_blueprint(routes)
 
 

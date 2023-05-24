@@ -15,3 +15,4 @@ class LoginSchema(Schema):
 class AnimalSchema(Schema):
     name = fields.String(required=True)
     color = fields.String(required=True)
+    image = fields.Field(required=True)
