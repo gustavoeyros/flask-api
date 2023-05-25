@@ -64,4 +64,4 @@ def process_image(file_id):
         'predicted_class': predicted_class,
         'confidence': confidence
     }
-    return jsonify(results)
+    return predicted_class, confidence

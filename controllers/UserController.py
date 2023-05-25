@@ -6,6 +6,8 @@ import bcrypt
 from gridfs import GridFS
 import tempfile
 import os
+from controllers import NeuralNController
+import asyncio
 
 fs = GridFS(db)
 
@@ -45,46 +47,53 @@ def signIn():
 
 
 def saveAnimal(userId):
-    animal_schema = AnimalSchema()
-    errors = animal_schema.validate(request.form, partial=True)
-    if errors:
-        return jsonify(errors), 400
+    async def saveAnimalAsync():
+        animal_schema = AnimalSchema()
+        errors = animal_schema.validate(request.form, partial=True)
+        if errors:
+            return jsonify(errors), 400
 
-    name = request.form.get('name')
-    color = request.form.get('color')
-    image = request.files['image']
+        name = request.form.get('name')
+        color = request.form.get('color')
+        image = request.files['image']
 
-    user_id = ObjectId(userId)
-    user_collection = db['users']
-    user = user_collection.find_one({'_id': user_id})
+        user_id = ObjectId(userId)
+        user_collection = db['users']
+        user = user_collection.find_one({'_id': user_id})
 
-    if user:
-        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-            image.save(temp_file.name)
+        if user:
+            with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                image.save(temp_file.name)
 
-        with open(temp_file.name, 'rb') as file:
-            image_id = fs.put(file, filename=image.filename)
+            with open(temp_file.name, 'rb') as file:
+                image_id = fs.put(file, filename=image.filename)
 
-        os.remove(temp_file.name)
+            os.remove(temp_file.name)
 
-        animal = {
-            'name': name,
-            'color': color,
-            'image_id': str(image_id),
-            'health': '',
-            'accuracy': ''
-        }
+            # Process the image asynchronously to get health
+            loop = asyncio.get_event_loop()
+            health, confidence = await loop.run_in_executor(None, NeuralNController.process_image, image_id)
 
-        animal_collection = db['animals']
-        animal_collection.update_one(
-            {'user_id': user_id},
-            {'$push': {'animals': animal}},
-            upsert=True
-        )
+            animal = {
+                'name': name,
+                'color': color,
+                'image_id': str(image_id),
+                'health': health,
+                'accuracy': confidence
+            }
 
-        return jsonify({'message': 'Animal registrado com sucesso!'})
-    else:
-        return jsonify({'error': 'Usuário não encontrado!'}), 404
+            animal_collection = db['animals']
+            animal_collection.update_one(
+                {'user_id': user_id},
+                {'$push': {'animals': animal}},
+                upsert=True
+            )
+
+            return jsonify({'message': 'Animal registrado com sucesso!'})
+        else:
+            return jsonify({'error': 'Usuário não encontrado!'}), 404
+
+    return asyncio.run(saveAnimalAsync())
 
 
 def findAnimals(userId):
