@@ -5,3 +5,7 @@ flask_marshmallow
 gridfs
 Pillow
 flask_cors
+numpy
+opencv-python
+keras
+tensorflow

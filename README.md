@@ -1,18 +1,9 @@
-# How to install:
+# How to install
 
 ```
 pip install -r requirements.txt
 ```
 
-Dependencies:
+# How to import Neural Network
 
-<ul>
-<li>flask</li>
-<li>pymongo</li>
-<li>marshmallow & flask_marshmallow</li>
-<li>bcrypt</li>
-<li>gridfs</li>
-<li>Pillow</li>
-<li>flask_cors</li>
-
-</ul>
+Download: https://gitlab.com/MateusOK/eye-classifier-flask/-/blob/main/my_model.h5

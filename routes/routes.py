@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from controllers import UserController
+from controllers import UserController, NeuralNController
 
 routes = Blueprint('routes', __name__)
 
@@ -22,3 +22,8 @@ def saveAnimal(userId):
 @routes.route('/findanimals/<userId>', methods=['GET'])
 def findAnimals(userId):
     return UserController.findAnimals(userId)
+
+
+@routes.route('/result/<file_id>', methods=['GET'])
+def get_image_result(file_id):
+    return NeuralNController.process_image(file_id)

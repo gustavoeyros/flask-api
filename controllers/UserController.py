@@ -70,7 +70,9 @@ def saveAnimal(userId):
         animal = {
             'name': name,
             'color': color,
-            'image_id': str(image_id)
+            'image_id': str(image_id),
+            'health': '',
+            'accuracy': ''
         }
 
         animal_collection = db['animals']
