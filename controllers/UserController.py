@@ -8,6 +8,7 @@ import tempfile
 import os
 from controllers import NeuralNController
 import asyncio
+from datetime import datetime
 
 fs = GridFS(db)
 
@@ -74,12 +75,17 @@ def saveAnimal(userId):
             loop = asyncio.get_event_loop()
             health, confidence = await loop.run_in_executor(None, NeuralNController.process_image, image_id)
 
+            formated_date = datetime.now().strftime('%d/%m/%Y')
+            formated_time = datetime.now().strftime('%H:%M:%S')
+
             animal = {
                 'name': name,
                 'color': color,
                 'image_id': str(image_id),
                 'health': health,
-                'accuracy': confidence
+                'accuracy': confidence,
+                'date': formated_date,
+                'time': formated_time,
             }
 
             animal_collection = db['animals']
@@ -89,7 +95,7 @@ def saveAnimal(userId):
                 upsert=True
             )
 
-            return jsonify({'message': 'Animal registrado com sucesso!'})
+            return jsonify({'message': 'Animal registrado com sucesso!', 'animalInfo': animal})
         else:
             return jsonify({'error': 'Usuário não encontrado!'}), 404
 
