@@ -23,8 +23,10 @@ def signUp():
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     data['password'] = hashed_password
     collection = db['users']
-    collection.insert_one(data)
-    return jsonify({'message': 'Usuário cadastrado com sucesso!'})
+    result = collection.insert_one(data)
+    inserted_id = result.inserted_id
+    return jsonify({'message': 'Usuário cadastrado com sucesso!', 'user_id': str(inserted_id)})
+
 
 
 def signIn():
