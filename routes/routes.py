@@ -14,7 +14,7 @@ def signIn():
     return UserController.signIn()
 
 
-@routes.route('/saveanimal/<userId>', methods=['POST'])
+@routes.route('/newanimal/<userId>', methods=['POST'])
 def saveAnimal(userId):
     return UserController.saveAnimal(userId)
 
@@ -22,6 +22,11 @@ def saveAnimal(userId):
 @routes.route('/findanimals/<userId>', methods=['GET'])
 def findAnimals(userId):
     return UserController.findAnimals(userId)
+
+
+@routes.route('/storeprediagnosis/<userId>/<animalId>', methods=['POST'])
+def storeAnimal(userId, animalId):
+    return UserController.storePreDiagnosis(userId, animalId)
 
 
 @routes.route('/result/<file_id>', methods=['GET'])
