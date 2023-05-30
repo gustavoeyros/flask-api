@@ -21,29 +21,21 @@ class_names = ['healthy', 'unhealthy']
 fs = GridFS(db)
 
 
-def Complexo(rotacao_image, angulo):
-    altura, largura = rotacao_image.shape[0], rotacao_image.shape[1]
-    y, x = altura / 2, largura / 2
-    rotacao_matriz = cv2.getRotationMatrix2D((x, y), angulo, 1.0)
-    coseno = np.abs(rotacao_matriz[0][0])
-    seno = np.abs(rotacao_matriz[0][1])
-    nova_altura = int((altura * seno) + largura * coseno)
-    nova_largura = int((altura * coseno) + largura * seno)
-    rotacao_matriz[0][2] += (nova_largura / 2) - x
-    rotacao_matriz[1][2] += (nova_altura / 2) - y
-    rotacionando_imagem = cv2.warpAffine(
-        rotacao_image, rotacao_matriz, (nova_largura, nova_altura))
-    return rotacionando_imagem
+def rotacao(rotacao_image, angulo):
+  altura, largura = rotacao_image.shape[0], rotacao_image.shape[1]
+  y, x = altura /2, largura/2
+  rotacao_matriz = cv2.getRotationMatrix2D((x, y), angulo, 1.0)
+  rotacionando_imagem = cv2.warpAffine(rotacao_image, rotacao_matriz, (largura, altura))
+  return rotacionando_imagem
 
 
 def process_image(file_id):
     file_id_formatted = ObjectId(file_id)
-    # Retrieve the image from MongoDB GridFS
+
     image_data = fs.get(file_id_formatted)
     image = Image.open(BytesIO(image_data.read()))
 
-    # Apply the "Complexo" function to rotate the image
-    rotated_image = Complexo(np.array(image), 360)
+    rotated_image = rotacao(np.array(image), 180)
     rotated_image = Image.fromarray(rotated_image)
 
     # Resize the rotated image
