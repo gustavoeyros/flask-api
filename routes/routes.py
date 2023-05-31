@@ -32,3 +32,8 @@ def storeAnimal(userId, animalId):
 @routes.route('/result/<file_id>', methods=['GET'])
 def get_image_result(file_id):
     return NeuralNController.process_image(file_id)
+
+
+@routes.route('/delete/<userId>/<animalId>', methods=['DELETE'])
+def deleteAnimal(userId, animalId):
+    return UserController.deleteAnimal(userId, animalId)

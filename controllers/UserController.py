@@ -160,3 +160,18 @@ def findAnimals(userId):
         return jsonify({'animals': animal_list})
     else:
         return jsonify({'error': 'Usuário não encontrado!'}), 404
+
+
+def deleteAnimal(userId, animalId):
+    user_id = ObjectId(userId)
+    animal_collection = db['animals']
+
+    result = animal_collection.update_one(
+        {'user_id': user_id},
+        {'$pull': {'animals': {'animalID': animalId}}}
+    )
+
+    if result.modified_count > 0:
+        return jsonify({'message': 'Animal removido com sucesso!'})
+    else:
+        return jsonify({'error': 'Animal não encontrado!'}), 404
