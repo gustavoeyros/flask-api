@@ -10,6 +10,7 @@ from controllers import NeuralNController
 import asyncio
 from datetime import datetime
 from uuid import uuid4
+import base64
 
 fs = GridFS(db)
 
@@ -155,6 +156,14 @@ def findAnimals(userId):
         animal_list = []
         for animal in animals:
             animal_info = animal['animals']
+            for animal_data in animal_info:
+                image_id = animal_data.get('image_placeholder_id')
+                image = fs.get(ObjectId(image_id))
+
+                # Converte a imagem para Base64
+                image_base64 = base64.b64encode(image.read()).decode('utf-8')
+                animal_data['image'] = image_base64
+
             animal_list.append(animal_info)
 
         return jsonify({'animals': animal_list})
