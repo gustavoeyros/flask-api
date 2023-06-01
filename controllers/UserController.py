@@ -184,3 +184,98 @@ def deleteAnimal(userId, animalId):
         return jsonify({'message': 'Animal removido com sucesso!'})
     else:
         return jsonify({'error': 'Animal não encontrado!'}), 404
+
+
+def updateUser(userId):
+    user_id = ObjectId(userId)
+    user_collection = db['users']
+    user = user_collection.find_one({'_id': user_id})
+
+    if user:
+        user_schema = UserSchema()
+        errors = user_schema.validate(request.json, partial=True)
+        if errors:
+            return jsonify(errors), 400
+
+        updated_data = request.get_json()
+        updated_data.pop('password', None)
+
+        result = user_collection.update_one(
+            {'_id': user_id},
+            {'$set': updated_data}
+        )
+
+        if result.modified_count > 0:
+            return jsonify({'message': 'Dados do usuário atualizados com sucesso!'})
+        else:
+            return jsonify({'error': 'Falha ao atualizar os dados do usuário'}), 500
+    else:
+        return jsonify({'error': 'Usuário não encontrado!'}), 404
+
+
+def updateAnimal(userId, animalId):
+    user_id = ObjectId(userId)
+    animal_collection = db['animals']
+
+    animal_schema = AnimalSchema()
+    errors = animal_schema.validate(request.form, partial=True)
+    if errors:
+        return jsonify(errors), 400
+
+    name = request.form.get('name')
+    color = request.form.get('color')
+    image = request.files.get('image')
+
+    user_animal = animal_collection.find_one({
+        'user_id': user_id,
+        'animals.animalID': animalId
+    })
+
+    if user_animal:
+        animal_index = next(
+            (index for index, animal in enumerate(
+                user_animal['animals']) if animal['animalID'] == animalId), None
+        )
+
+        if animal_index is not None:
+            if image:
+                with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                    image.save(temp_file.name)
+
+                with open(temp_file.name, 'rb') as file:
+                    image_id = fs.put(file, filename=image.filename)
+
+                os.remove(temp_file.name)
+
+                animal_collection.update_one(
+                    {
+                        'user_id': user_id,
+                        'animals.animalID': animalId
+                    },
+                    {
+                        '$set': {
+                            f'animals.{animal_index}.name': name,
+                            f'animals.{animal_index}.color': color,
+                            f'animals.{animal_index}.image_placeholder_id': str(image_id),
+                        }
+                    }
+                )
+            else:
+                animal_collection.update_one(
+                    {
+                        'user_id': user_id,
+                        'animals.animalID': animalId
+                    },
+                    {
+                        '$set': {
+                            f'animals.{animal_index}.name': name,
+                            f'animals.{animal_index}.color': color,
+                        }
+                    }
+                )
+
+            return jsonify({'message': 'Animal atualizado com sucesso!'})
+        else:
+            return jsonify({'error': 'Animal não encontrado!'}), 404
+    else:
+        return jsonify({'error': 'Usuário não encontrado ou animal não encontrado!'}), 404
