@@ -2,7 +2,6 @@ flask
 pymongo
 marshmallow
 flask_marshmallow
-gridfs
 Pillow
 flask_cors
 numpy
