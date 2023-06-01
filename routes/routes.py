@@ -37,3 +37,13 @@ def get_image_result(file_id):
 @routes.route('/delete/<userId>/<animalId>', methods=['DELETE'])
 def deleteAnimal(userId, animalId):
     return UserController.deleteAnimal(userId, animalId)
+
+
+@routes.route('/updateuser/<userId>', methods=['PUT'])
+def updateUser(userId):
+    return UserController.updateUser(userId)
+
+
+@routes.route('/updateanimal/<userId>/<animalId>', methods=['PUT'])
+def updateAnimal(userId, animalId):
+    return UserController.updateAnimal(userId, animalId)
