@@ -43,6 +43,9 @@ def deleteAnimal(userId, animalId):
 def updateUser(userId):
     return UserController.updateUser(userId)
 
+@routes.route('/verifyuser/<userId>', methods=['GET'])
+def verifyUser(userId):
+    return UserController.verifyUser(userId)
 
 @routes.route('/updateanimal/<userId>/<animalId>', methods=['PUT'])
 def updateAnimal(userId, animalId):

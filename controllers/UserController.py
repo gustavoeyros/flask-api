@@ -49,6 +49,16 @@ def signIn():
     # Usuário não encontrado ou credenciais inválidas
     return jsonify({'error': 'Credenciais inválidas'}), 401
 
+def verifyUser(userId):
+    user_id = ObjectId(userId)
+    user_collection = db['users']
+    user = user_collection.find_one({'_id': user_id})
+
+    if user:
+        return jsonify({'message': 'Usuário encontrado!'}), 200
+    else:
+        return jsonify({'error': 'Usuário não encontrado!'}), 404
+
 
 def saveAnimal(userId):
     async def saveAnimalAsync():
