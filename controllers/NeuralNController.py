@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import Flask, request, jsonify
 from gridfs import GridFS
 from io import BytesIO
 from keras.utils import img_to_array
@@ -8,7 +8,10 @@ import numpy as np
 import cv2
 from models.bd import db
 from bson import ObjectId
+from flask_cors import CORS
 
+app = Flask(__name__)
+CORS(app)
 
 # Load the saved model
 model = load_model("my_model.h5")

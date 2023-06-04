@@ -31,7 +31,12 @@ def storeAnimal(userId, animalId):
 
 @routes.route('/result/<file_id>', methods=['GET'])
 def get_image_result(file_id):
-    return NeuralNController.process_image(file_id)
+    predicted_class, confidence = NeuralNController.process_image(file_id)
+    results = {
+        'predicted_class': predicted_class,
+        'confidence': confidence
+    }
+    return jsonify(results)
 
 
 @routes.route('/delete/<userId>/<animalId>', methods=['DELETE'])
