@@ -49,6 +49,7 @@ def signIn():
     # Usuário não encontrado ou credenciais inválidas
     return jsonify({'error': 'Credenciais inválidas'}), 401
 
+
 def verifyUser(userId):
     user_id = ObjectId(userId)
     user_collection = db['users']
@@ -127,27 +128,35 @@ def storePreDiagnosis(userId, animalId):
             formated_date = datetime.now().strftime('%d/%m/%Y')
             formated_time = datetime.now().strftime('%H:%M:%S')
 
-            prediagnosis = {
-                'health': health,
-                'accuracy': confidence,
-                'date': formated_date,
-                'time': formated_time,
-                'image_id': str(image_id),
-            }
-
             animal_collection = db['animals']
-            animal_collection.update_one(
-                {
-                    'user_id': user_id,
-                    'animals.animalID': animalId
-                },
-                {
-                    '$push': {
-                        'animals.$.prediagnosis': prediagnosis
-                    }
-                }
+            animal = animal_collection.find_one(
+                {'user_id': user_id, 'animals.animalID': animalId},
+                projection={'animals.$': 1}
             )
-            return jsonify({'message': 'Pré-diagnóstico realizado com sucesso!', 'animalInfo': prediagnosis})
+
+            if animal:
+                animal_data = animal['animals'][0]
+                animal_name = animal_data.get('name')
+                animal_color = animal_data.get('color')
+
+                prediagnosis = {
+                    'health': health,
+                    'accuracy': confidence,
+                    'date': formated_date,
+                    'time': formated_time,
+                    'image_id': str(image_id),
+                }
+
+                animalFormated = {
+                    'name': animal_name,
+                    'color': animal_color,
+                    'prediagnosis': prediagnosis
+                }
+
+                return jsonify({'message': 'Pré-diagnóstico realizado com sucesso!', 'animalInfo': animalFormated})
+            else:
+                return jsonify({'error': 'Animal não encontrado!'}), 404
+
         else:
             return jsonify({'error': 'Usuário não encontrado!'}), 404
 
