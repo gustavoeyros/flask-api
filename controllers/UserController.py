@@ -147,6 +147,18 @@ def storePreDiagnosis(userId, animalId):
                     'image_id': str(image_id),
                 }
 
+                animal_collection.update_one(
+                    {
+                        'user_id': user_id,
+                        'animals.animalID': animalId
+                    },
+                    {
+                        '$push': {
+                            'animals.$.prediagnosis': prediagnosis
+                        }
+                    }
+                )
+
                 animalFormated = {
                     'name': animal_name,
                     'color': animal_color,
